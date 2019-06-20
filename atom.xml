@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://evercurse.github.io/</id>
     <title>Devops Art</title>
-    <updated>2019-06-20T10:11:28.601Z</updated>
+    <updated>2019-06-20T10:12:53.044Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://evercurse.github.io/"/>
     <link rel="self" href="https://evercurse.github.io//atom.xml"/>
@@ -10,22 +10,6 @@
     <logo>https://evercurse.github.io//images/avatar.png</logo>
     <icon>https://evercurse.github.io//favicon.ico</icon>
     <rights>All rights reserved 2019, Devops Art</rights>
-    <entry>
-        <title type="html"><![CDATA[关于]]></title>
-        <id>https://evercurse.github.io//post/about</id>
-        <link href="https://evercurse.github.io//post/about">
-        </link>
-        <updated>2019-01-25T11:09:48.000Z</updated>
-        <content type="html"><![CDATA[<pre><code>var me = new Sre()
-me.birthday = 1993-11-18
-me.university = 东北大学
-me.city = 成都
-me.job = 运维开发工程师
-me.email = unknow_code@163.com
-
-</code></pre>
-]]></content>
-    </entry>
     <entry>
         <title type="html"><![CDATA[Hello Gridea]]></title>
         <id>https://evercurse.github.io//post/hello-gridea</id>

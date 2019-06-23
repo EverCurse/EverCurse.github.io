@@ -1,0 +1,331 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    
+<meta charset="utf-8" >
+
+<title>2.Pod控制器 | Devops Art</title>
+<meta name="description" content="Cloud Native of Devops">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://evercurse.github.io//favicon.ico?v=1561306668699">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://evercurse.github.io//styles/main.css">
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+      <div class="site-header-container">
+  <div class="site-header">
+    <div class="left">
+      <a href="https://evercurse.github.io/">
+        <img class="avatar" src="https://evercurse.github.io//images/avatar.png?v=1561306668699" alt="" width="32px" height="32px">
+      </a>
+      <a href="https://evercurse.github.io/">
+        <h1 class="site-title">Devops Art</h1>
+      </a>
+    </div>
+    <div class="right">
+      <transition name="fade">
+        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
+      </transition>
+    </div>
+  </div>
+</div>
+
+<transition name="fade">
+  <div class="menu-container" style="display: none;" v-show="menuVisible">
+    <div class="menu-list">
+      
+        
+          <a href="/" class="menu purple-link">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="menu purple-link">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="menu purple-link">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="menu purple-link">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+</transition>
+
+
+      <div class="content-container">
+        <div class="post-detail">
+          
+          <h2 class="post-title">2.Pod控制器</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2019-06-24</span>
+            
+          </div>
+          <div class="post-content">
+            <h4 id="常见pod控制器">常见pod控制器</h4>
+<ul>
+<li>Replication Controller</li>
+<li>ReplicaSet</li>
+<li>Deployment</li>
+<li>DaemonSet</li>
+<li>StatefulSet</li>
+<li>Job</li>
+<li>CronJob</li>
+</ul>
+<h4 id="控制器与pod对象-至少包含以下三个部分">控制器与pod对象 至少包含以下三个部分</h4>
+<ul>
+<li>标签选择器</li>
+<li>期望副本数量</li>
+<li>模板</li>
+</ul>
+<pre><code>apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: rs-example
+spec:
+  replicas:2
+  selector:
+    matchLabels: 
+      app: rs-demo
+  template: 
+    metadata:
+      labels:
+        app:rs-demo 
+    spec:
+      containers:
+      - name: myapp
+        image: ikubernetes/myapp:v1 
+        ports:
+        - name: http
+          containerPort: 80
+</code></pre>
+<h4 id="rs-rc">rs rc</h4>
+<blockquote>
+<p>Rs 支持滚动更新 以及强大的标签选择器 rc基本淘汰 rs也不常用 一般选择更为高级的deployment(基于rs)</p>
+</blockquote>
+<h3 id="rs控制器">rs控制器</h3>
+<h4 id="更新rs控制器">更新rs控制器</h4>
+<pre><code>修改yaml文件 例如image的版本
+再执行kubectl apply 或者 kubectl replace
+</code></pre>
+<h4 id="rs扩容缩容">rs扩容缩容</h4>
+<pre><code>kubectl scale replicasets rs-example --replicas=3
+</code></pre>
+<h4 id="删除rs控制器资源">删除rs控制器资源</h4>
+<pre><code>kubectl delete replicasets rs-example -cascade=false #cascade=false这里是取消级联删除 与rs绑定的pod不会被删除
+</code></pre>
+<h3 id="deployment">Deployment</h3>
+<h4 id="与rs相比的高级特性">与rs相比的高级特性</h4>
+<ul>
+<li>事件和状态查看  可查看应用升级的状态和进度</li>
+<li>回滚</li>
+<li>版本记录</li>
+<li>暂停和启动</li>
+<li>多种自动更新方案 1.recreate 完全删除重建 2.RollingUpdate(default)</li>
+</ul>
+<h4 id="创建deploy">创建deploy</h4>
+<pre><code>apiVersion: apps/vl 
+kind: Deployment 
+metadata:
+  name: myapp-deploy 
+spec :
+  replicas: 3 
+  selector:
+    matchLabels: 
+      app: myapp
+  template: 
+    metadata: 
+      labels:
+        app: myapp 
+    spec:
+      containers:
+      - name: myapp
+        image: ikubernetes/myapp:vl
+        ports:
+        - containerPort: 80
+          name: http
+</code></pre>
+<pre><code>kubectl apply -f myapp-deploy.yaml --record #创建
+</code></pre>
+<h4 id="deploy-更新">deploy 更新</h4>
+<blockquote>
+<p>滚动升级其实是新旧rs控制器交替减少或增加的过程 最终老的rs记录到历史记录中 但它所控制的pod不再受管控</p>
+</blockquote>
+<h4 id="滚动更新重要参数">滚动更新重要参数</h4>
+<ul>
+<li>
+<p>maxSurge 指定升级期间存在的总Pod对象数量最多可超出期望值的个数 可以是百分比</p>
+</li>
+<li>
+<p>maxUnavailable 升级期间正常可用的Pod副本数(包括新 旧版本)最多不能低于期望数值的个数  也可以是百分比 默认1</p>
+</li>
+</ul>
+<blockquote>
+<p>maxSurge 和 maxUnavailable 属性的值不可同时为 0</p>
+</blockquote>
+<h4 id="升级deploy">升级deploy</h4>
+<pre><code>kubectl set image deployments myapp-deploy myapp=ikubernetes/myapp:v2
+</code></pre>
+<pre><code>kubectl rollout stacus deployments myapp-deploy 查看滚动更新状态
+</code></pre>
+<pre><code>kubectl get deployments myapp-deploy --watch 也可以查看到滚动更新pod变化的过程
+</code></pre>
+<h4 id="金丝雀发布">金丝雀发布</h4>
+<pre><code>首先要设置maxSure为一个值 例如1和maxUnavailable=0(不影响老版本pod的删除) 相当于新增一个新版本pod 然后pause更新
+
+kubectl set image deployments myapp-deploy myapp=ikubernetes/myapp:v3 \ &amp;&amp; kubectl rollout pause deployments myapp deploy
+
+没问题的话恢复更新
+kubectl rollout resume deployments myapp-deploy
+
+
+</code></pre>
+<h4 id="回滚">回滚</h4>
+<blockquote>
+<p>如有问题 速度回滚
+kubectl rollout undo deployments myapp deploy #也可以加--to-revision回滚到指定的历史版本号</p>
+<p>历史版本查看
+kubectl rollout history deployments myapp-deploy</p>
+<p>需要注意回滚操作也会记录到history中 被回滚的版本会从history中删除 初次之外 如果滚动更新处于暂停状态中 那么需要回滚之前现在pod版本修改为之前的状态 否则处于暂停状态无法回滚</p>
+</blockquote>
+<h4 id="扩容缩容">扩容缩容</h4>
+<ul>
+<li>修改yaml 然后kubectrl apply</li>
+<li>kubectrl edit xxx</li>
+<li>kubectl scale  类似rs的扩容</li>
+</ul>
+<h3 id="daemonset">DaemonSet</h3>
+<h4 id="应用场景">应用场景</h4>
+<ul>
+<li>
+<p>运行集群存储的守护进程，如在各个节点上运行 glusterd或 ceph。</p>
+</li>
+<li>
+<p>在各个节点上运行日志收集守护进程，如 fluentd和 logstash。</p>
+</li>
+<li>
+<p>在各个节点上运行监控系统的代理守护进程，如 Prometheus Node Exporter， collectd、 Datadog agent New Relic agent 或 Ganglia gmond 等</p>
+</li>
+</ul>
+<h3 id="job控制器">job控制器</h3>
+<blockquote>
+<p>job完成后 控制器不会对该pod进行重启 而是标记为Complete状态 如job有失败那么根据配置来决定是否重启(restartPolicy)</p>
+</blockquote>
+<h4 id="job控制分类">job控制分类</h4>
+<ul>
+<li>单工作队列 串行 某一时刻只有一个pod</li>
+<li>多工作队列 并行 可以设置工作队列数 每个队列仅负责一个作业</li>
+</ul>
+<h4 id="job应用场景">job应用场景</h4>
+<ul>
+<li>计算</li>
+<li>备份</li>
+</ul>
+<p>创建job</p>
+<pre><code>apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pi
+spec:
+  template:
+    spec:
+      containers:
+      - name: pi
+        image: perl
+        command: [&quot;perl&quot;,  &quot;-Mbignum=bpi&quot;, &quot;-wle&quot;, &quot;print bpi(2000)&quot;]
+      restartPolicy: Never #Never Always OnFailure 
+</code></pre>
+<h4 id="job-重要参数没有细看">job 重要参数(没有细看)</h4>
+<ul>
+<li>completions</li>
+<li>parallelism</li>
+<li>backoffLimit</li>
+<li>activeDeadlineSeconds</li>
+</ul>
+<h4 id="job扩容-和deploy一样没有细看">job扩容 和deploy一样(没有细看)</h4>
+<h3 id="cronjob">CronJob</h3>
+<p><img src="https://s2.ax1x.com/2019/06/24/ZFb9UJ.png" alt="cronjob"></p>
+<h4 id="cronjob重要参数">cronjob重要参数</h4>
+<ul>
+<li>scheduler 调度周期</li>
+<li>concurrencyPolicy  并发策略 Allow Forbid Replace(替换)</li>
+</ul>
+
+          </div>
+        </div>
+
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://evercurse.github.io//post/1guan-li-pod-dui-xiang-rong-qi">
+              <h3 class="post-title">
+                下一篇：1.管理pod对象容器
+              </h3>
+            </a>
+          </div>
+          
+      </div>
+
+      
+
+      <div class="site-footer">
+  <div class="slogan">Cloud Native of Devops</div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+  Powered by <a href="https://github.com/EverCurse" target="_blank">Kylin</a> | <a class="rss" href="https://evercurse.github.io//atom.xml" target="_blank">RSS</a>
+</div>
+
+
+    </div>
+    <script type="application/javascript">
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+</script>
+
+
+
+
+  </body>
+</html>

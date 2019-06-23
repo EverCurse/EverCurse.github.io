@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://evercurse.github.io/</id>
     <title>Devops Art</title>
-    <updated>2019-06-23T14:35:53.306Z</updated>
+    <updated>2019-06-23T14:39:58.119Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://evercurse.github.io/"/>
     <link rel="self" href="https://evercurse.github.io//atom.xml"/>
@@ -55,9 +55,9 @@ spec:
 <li>
 <p>env</p>
 <pre><code>env:
-- name: REDIS HOST
+- name: REDIS_HOST
   value: db.ilinux.io:6379 
-- name: LOG LEVEL
+- name: LOG_LEVEL
   value: info
 </code></pre>
 </li>

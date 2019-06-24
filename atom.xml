@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://evercurse.github.io/</id>
     <title>Devops Art</title>
-    <updated>2019-06-23T16:18:07.417Z</updated>
+    <updated>2019-06-24T07:58:45.115Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://evercurse.github.io/"/>
     <link rel="self" href="https://evercurse.github.io//atom.xml"/>
@@ -10,6 +10,130 @@
     <logo>https://evercurse.github.io//images/avatar.png</logo>
     <icon>https://evercurse.github.io//favicon.ico</icon>
     <rights>All rights reserved 2019, Devops Art</rights>
+    <entry>
+        <title type="html"><![CDATA[3.Service和Ingress]]></title>
+        <id>https://evercurse.github.io//post/3service-he-ingress</id>
+        <link href="https://evercurse.github.io//post/3service-he-ingress">
+        </link>
+        <updated>2019-06-24T07:58:25.000Z</updated>
+        <content type="html"><![CDATA[<h3 id="service-和-ingress">Service 和 Ingress</h3>
+<h4 id="创建service">创建service</h4>
+<pre><code>kind: Service
+apiVersion: v1
+metadata:
+  name: k8s-demo-svc 
+spec:
+  selector: 
+    run: k8s-demo
+  ports:
+  - protocol: TCP
+    port: 80 #service 端口
+    targetPort: 12306 #pod的端口 相当于upstream
+</code></pre>
+<h4 id="获取service的endpoints">获取service的endpoints</h4>
+<pre><code>[root@cloud-m-1 ~]# kubectl get endpoints k8s-demo-svc
+NAME           ENDPOINTS                                                  AGE
+k8s-demo-svc   10.10.112.14:12306,10.10.112.15:12306,10.10.28.145:12306   4m49s
+</code></pre>
+<h4 id="调试service">调试service</h4>
+<pre><code>1.busybox
+2. kubectl run cirros-$RANDOM --rm -it - image=cirros sh #cirrors容器 更强大一点
+</code></pre>
+<h4 id="service-会话粘性">Service 会话粘性</h4>
+<ul>
+<li>sessionAffinity 可设置为None和ClientIP</li>
+<li>sessionAffinityConfig 配置其会话保持的时长 1-86400s 默认10800s</li>
+</ul>
+<h4 id="服务发现">服务发现</h4>
+<ul>
+<li>
+<p>环境变量</p>
+<pre><code>每个pod都会被注入所有服务信息的环境变量
+{SVCNAME}_SERVICE_HOST
+{SVCNAME}_SERVICE_PORT
+</code></pre>
+</li>
+<li>
+<p>ClusterDNS</p>
+</li>
+</ul>
+<h4 id="service类型">service类型</h4>
+<ul>
+<li>
+<p>ClusterIP</p>
+</li>
+<li>
+<p>NodePort</p>
+</li>
+<li>
+<p>LoadBalancer</p>
+</li>
+<li>
+<p>ExternalNam</p>
+</li>
+</ul>
+<h4 id="nodeport-类型的service">NodePort 类型的service</h4>
+<pre><code>kind: Service 
+apiVersion: v1
+metadata:
+  name: myapp-svc-nodeport
+spec:
+  type: NodePort
+  selector: 
+    app: myapp
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80 
+    nodePort: 32223
+</code></pre>
+<h4 id="ingress">Ingress</h4>
+<h4 id="创建">创建</h4>
+<blockquote>
+<p>https://github.com/kubernetes/ingress-nginx</p>
+</blockquote>
+<pre><code>apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: k8s-demo-ingress
+  annotations:
+    kubernetes.io/ingress.class: &quot;nginx&quot;
+spec:
+  rules:
+  - host: www.k8s-demo.io
+    http: 
+      paths:
+      - backend:
+          serviceName: k8s-demo-svc 
+          servicePort: 80
+</code></pre>
+<blockquote>
+<p>ingress 基于NodePort 会在每个Node上开启两个端口用于http https ，所以最好用一个lb代理所有node的这两个端口</p>
+</blockquote>
+<h4 id="ingress-https">ingress https</h4>
+<ul>
+<li>
+<p>openssl genrsa -out tls key 2048</p>
+</li>
+<li>
+<p>openssl req -new -x509 -key tls .key -out tls .crt \</p>
+<p>-subj / C=CN/ST=Beijing/L=Beijing/O=DevOps/CN=www.k8s-demo  -days 3650</p>
+</li>
+<li>
+<p>kubectl create secret tls k8s-demo-ingress-secret -cert=tls.crt  -key=tls.key -</p>
+</li>
+<li>
+<p>ingress 引用</p>
+<pre><code>tls:
+- hosts:
+  - www.k8s-demo.io
+    secretName: k8s-demo-ingress-secret
+</code></pre>
+</li>
+</ul>
+<p><img src="https://s2.ax1x.com/2019/06/24/ZkHgWn.png" alt="cronjob"></p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[2.Pod控制器]]></title>
         <id>https://evercurse.github.io//post/2pod-kong-zhi-qi</id>
